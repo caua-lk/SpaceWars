@@ -89,6 +89,35 @@ class RoboZigueZague(Robo):
         if self.rect.y > ALTURA:
             self.kill()
 
+class Robo_Cacador(Robo):
+    def __init__(self,x,y):
+        # Irritante e perseguidor
+        super().__init__(x,y,velocidade=7)
+        self.image.fill((0,0,255))
+
+    def atualizar_posicao(self, nave):
+        limit = ALTURA * 0.8
+        # Verifica se o alien está acima da metade da tela
+        # e a nave está abaixo dele
+        if self.rect.centery < limit:
+            # Persegue a nave
+            direcao = pygame.math.Vector2(nave.rect.center) - pygame.math.Vector2(self.rect.center)
+            if direcao.length() != 0:
+                direcao = direcao.normalize()
+            else:
+                direcao = pygame.math.Vector2(0, 1)
+
+            self.rect.x += direcao.x * (self.velocidade * 0.6)
+            self.rect.y += direcao.y * self.velocidade
+        else:
+            # Se a nave estiver acima ou o alien passou do condicionado, desce reto
+            self.rect.y += self.velocidade
+    
+    def update(self):
+        global jogador
+        self.seach_nave(jogador)
+        if self.rect.y > ALTURA:
+            self.kill()
 
 todos_sprites = pygame.sprite.Group()
 inimigos = pygame.sprite.Group()
